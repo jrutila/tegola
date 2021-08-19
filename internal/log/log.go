@@ -67,6 +67,25 @@ func (lvl Level) String() string {
 	}
 }
 
+func FromString(lvl string) Level {
+	switch lvl {
+	case "TRACE":
+		return TRACE
+	case "DEBUG":
+		return DEBUG
+	case "INFO":
+		return INFO
+	case "WARN":
+		return WARN
+	case "ERROR":
+		return ERROR
+	case "FATAL":
+		return FATAL
+	default:
+		return INFO
+	}
+}
+
 func SetOutput(w io.Writer) {
 	logger.SetOutput(w)
 }

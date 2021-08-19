@@ -15,6 +15,7 @@ import (
 
 var (
 	configFile string
+	verboseLevel string
 	// parsed config
 	conf config.Config
 
@@ -25,6 +26,7 @@ var (
 func init() {
 	// root
 	RootCmd.PersistentFlags().StringVar(&configFile, "config", "config.toml", "path to config file")
+	RootCmd.PersistentFlags().StringVarP(&verboseLevel, "verbose", "v", "INFO", "logging level: TRACE, DEBUG, INFO, WARN, ERROR, FATAL")
 
 	// server
 	serverCmd.Flags().StringVarP(&serverPort, "port", "p", ":8080", "port to bind tile server to")
@@ -54,12 +56,14 @@ func rootCmdValidatePersistent(cmd *cobra.Command, args []string) (err error) {
 		build.Commands = append(build.Commands, cmdName)
 		return nil
 	default:
+		log.SetLogLevel(log.FromString(verboseLevel))
 		return initConfig(configFile, requireCache)
 	}
 }
 
 func initConfig(configFile string, cacheRequired bool) (err error) {
 	log.Infof("Loading config file: %v", configFile)
+	log.Debugf("Logging level is: %s", verboseLevel)
 	if conf, err = config.Load(configFile); err != nil {
 		return err
 	}
