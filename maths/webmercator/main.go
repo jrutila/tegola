@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"github.com/go-spatial/tegola/internal/log"
 )
 
 const (
@@ -88,6 +89,7 @@ func YToLat(y float64) float64 {
 
 // ToLonLat given a set of coordinates (x,y) it will convert them to Lon/Lat coordinates. If more then x,y is given (i.e. z, and m) they will be returned untransformed.
 func ToLonLat(c ...float64) ([]float64, error) {
+	log.Trace("ToLonLat")
 	if len(c) < 2 {
 		return c, fmt.Errorf("Coords should have at least 2 coords")
 	}
@@ -98,6 +100,7 @@ func ToLonLat(c ...float64) ([]float64, error) {
 
 // ToXY given a set of coordinates (lon,lat) it will convert them to X,Y coordinates. If more then lon/lat is given (i.e. z, and m) they will be returned untransformed.
 func ToXY(c ...float64) ([]float64, error) {
+	log.Trace("ToXY")
 	if len(c) < 2 {
 		return c, fmt.Errorf("Coords should have at least 2 coords")
 	}

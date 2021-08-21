@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-spatial/geom"
 	"github.com/go-spatial/tegola/maths/webmercator"
+	"github.com/go-spatial/tegola/internal/log"
 )
 
 const (
@@ -49,7 +50,9 @@ func NewTile(z, x, y uint) (t *Tile) {
 		Extent:    DefaultExtent,
 		Tolerance: DefaultEpislon,
 	}
+	log.Tracef("New tile %i %i %i", z, x, y)
 	t.Lat, t.Long = t.Num2Deg()
+	log.Tracef("Tile Lat Long %i %i", t.Lat, t.Long)
 	t.Init()
 	return t
 }
@@ -138,8 +141,11 @@ func (t *Tile) Bounds() [4]float64 {
 }
 
 func toWebMercator(srid int, pt [2]float64) (npt [2]float64, err error) {
+	log.Trace("toWebMercator")
 	switch srid {
 	default:
+		return npt, UnknownConversionError
+	case NonEarth:
 		return npt, UnknownConversionError
 	case WebMercator:
 		return pt, nil
@@ -153,8 +159,11 @@ func toWebMercator(srid int, pt [2]float64) (npt [2]float64, err error) {
 }
 
 func fromWebMercator(srid int, pt [2]float64) (npt [2]float64, err error) {
+	log.Trace("fromWebMercator")
 	switch srid {
 	default:
+		return npt, UnknownConversionError
+	case NonEarth:
 		return npt, UnknownConversionError
 	case WebMercator:
 		return pt, nil

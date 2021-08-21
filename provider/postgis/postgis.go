@@ -644,6 +644,7 @@ func (p Provider) TileFeatures(ctx context.Context, layer string, tile provider.
 		return ErrLayerNotFound{layer}
 	}
 
+	log.Printf("TEGOLA_SQL_DEBUG: plyr.sql %s", plyr.sql)
 	sql, err := replaceTokens(plyr.sql, &plyr, tile, true)
 	if err != nil {
 		return fmt.Errorf("error replacing layer tokens for layer (%v) SQL (%v): %v", layer, sql, err)

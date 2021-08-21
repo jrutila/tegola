@@ -43,6 +43,11 @@ RUN apk update \
 RUN mkdir -p /go/src/github.com/go-spatial/tegola
 COPY . /go/src/github.com/go-spatial/tegola
 
+# Build UI
+#RUN apk add --update nodejs npm
+#RUN cd /go/src/github.com/go-spatial/tegola/ui \
+	#&& go run build.go
+
 # Build binary
 RUN cd /go/src/github.com/go-spatial/tegola/cmd/tegola \
  	&& go build -v -ldflags "-w -X 'github.com/go-spatial/tegola/cmd/tegola/cmd.Version=${VERSION}'" -gcflags "-N -l" -o /opt/tegola \

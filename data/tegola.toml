@@ -1,0 +1,132 @@
+# This Tegola configuration file reads environment variables for sensitive and installation-specific settings. See
+# .env-example or simply hardcode correct values for your installation.
+
+[webserver]
+port = ":80"
+
+# Tegola offers three tile caching strategies: "file", "redis", and "s3"
+# [cache]
+# type = "${CACHE_TYPE}"
+
+# FileCache. See https://github.com/go-spatial/tegola/tree/master/cache/file
+# RedisCache. See https://github.com/go-spatial/tegola/tree/master/cache/redis
+# S3Cache. See https://github.com/go-spatial/tegola/tree/master/cache/s3
+# bucket = "${S3CACHE_BUCKET}"
+# basepath = "${S3CACHE_BASEPATH}"
+# region = "${S3CACHE_REGION}"
+# aws_access_key_id = "${S3CACHE_AWS_ACCESS_KEY_ID}"
+# aws_secret_access_key = "${S3CACHE_AWS_SECRET_ACCESS_KEY}"
+
+
+#   OpenStreetMap (OSM)
+[[providers]]
+name = "osm"
+type = "postgis"
+host = "db-gis"
+port = "5432"
+database = "gis"
+user = "dbuser"
+srid = 6707
+password = "dbpassword"
+
+	#[[providers.layers]]
+	#name = "transport_lines_14-20"
+	#geometry_fieldname = "geometry"
+	#id_fieldname = "osm_id"
+	#sql = "SELECT ST_AsBinary(geometry) AS geometry, osm_id, name, ref, class, type, tunnel, bridge, access, service, tags FROM osm_transport_lines WHERE geometry && !BBOX!"
+
+# Land Use
+	#[[providers.layers]]
+	#name = "landuse_areas"
+	#geometry_fieldname = "geometry"
+	#id_fieldname = "osm_id"
+	#sql = "SELECT ST_AsBinary(geometry) AS geometry, osm_id, name, class, type, area FROM osm_landuse_areas WHERE geometry && !BBOX!"
+#
+	#[[providers.layers]]
+	#name = "landuse_areas_gen0"
+	#geometry_fieldname = "geometry"
+	#id_fieldname = "osm_id"
+	#sql = "SELECT ST_AsBinary(geometry) AS geometry, osm_id, name, class, type, area FROM osm_landuse_areas_gen0 WHERE type IN ('forest','wood','nature reserve', 'nature_reserve', 'military') AND area > 1000000000 AND geometry && !BBOX!"
+#
+	#[[providers.layers]]
+	#name = "landuse_areas_gen0_6"
+	#geometry_fieldname = "geometry"
+	#id_fieldname = "osm_id"
+	#sql = "SELECT ST_AsBinary(geometry) AS geometry, osm_id, name, class, type, area FROM osm_landuse_areas_gen0 WHERE type IN ('forest','wood','nature reserve', 'nature_reserve', 'military') AND area > 100000000 AND geometry && !BBOX!"
+#
+	#[[providers.layers]]
+	#name = "landuse_areas_gen1"
+	#geometry_fieldname = "geometry"
+	#id_fieldname = "osm_id"
+	#sql = "SELECT ST_AsBinary(geometry) AS geometry, osm_id, name, class, type, area FROM osm_landuse_areas_gen1 WHERE geometry && !BBOX!"
+
+# Land
+	#[[providers.layers]]
+	#name = "ne_110m_land"
+	#geometry_fieldname = "geometry"
+	#id_fieldname = "ogc_fid"
+	#sql = "SELECT ST_AsBinary(wkb_geometry) AS geometry, ogc_fid, featurecla, min_zoom FROM ne_110m_land WHERE wkb_geometry && !BBOX!"
+#
+	#[[providers.layers]]
+	#name = "ne_50m_land"
+	#geometry_fieldname = "geometry"
+	#id_fieldname = "ogc_fid"
+	#sql = "SELECT ST_AsBinary(wkb_geometry) AS geometry, ogc_fid, featurecla, min_zoom FROM ne_50m_land WHERE wkb_geometry && !BBOX!"
+#
+	#[[providers.layers]]
+	#name = "ne_10m_land"
+	#geometry_fieldname = "geometry"
+	#id_fieldname = "ogc_fid"
+	#sql = "SELECT ST_AsBinary(wkb_geometry) AS geometry, ogc_fid, featurecla, min_zoom FROM ne_10m_land WHERE wkb_geometry && !BBOX!"
+
+	[[providers.layers]]
+	name = "land_8-20"
+	geometry_fieldname = "geometry"
+	id_fieldname = "ogc_fid"
+	#sql = "SELECT ST_AsBinary(ST_AsMVTGeom(geom, !BBOX!)) AS geometry, ogc_fid FROM land_polygons WHERE geom && !BBOX!"
+	sql = "SELECT ST_AsBinary(geom) AS geometry, ogc_fid FROM land_polygons WHERE geom && !BBOX!"
+
+
+[[maps]]
+name = "osm"
+attribution = "OpenStreetMap" # map attribution
+center = [0.0, 0.0, 8.0] # optional center value. part of the TileJSON spec
+
+	##[[maps.layers]]
+	#name = "transport_lines"
+	#provider_layer = "osm.transport_lines_14-20"
+	#min_zoom = 1
+	max_zoom = 20
+
+# Land Use
+	#[[maps.layers]]
+	#name = "landuse_areas"
+	#provider_layer = "osm.landuse_areas"
+	#min_zoom = 1
+	#max_zoom = 20
+
+# Land Polygons
+	#[[maps.layers]]
+	#name = "land"
+	#provider_layer = "osm.ne_110m_land"
+	#min_zoom = 0
+	#max_zoom = 2
+#
+	#[[maps.layers]]
+	#name = "land"
+	#provider_layer = "osm.ne_50m_land"
+	#min_zoom = 3
+	#max_zoom = 4
+#
+	#[[maps.layers]]
+	#name = "land"
+	#provider_layer = "osm.ne_10m_land"
+	#min_zoom = 5
+	#max_zoom = 7
+
+	[[maps.layers]]
+	name = "land"
+	provider_layer = "osm.land_8-20"
+	dont_simplify = true
+	min_zoom = 1
+	max_zoom = 20

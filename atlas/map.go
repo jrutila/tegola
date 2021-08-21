@@ -235,6 +235,7 @@ func (m Map) encodeMVTTile(ctx context.Context, tile *slippy.Tile) ([]byte, erro
 				geo := f.Geometry
 
 				// check if the feature SRID and map SRID are different. If they are then reporject
+				log.Printf("encodeMVTTile %i %i", f.SRID, m.SRID)
 				if f.SRID != m.SRID {
 					// TODO(arolek): support for additional projections
 					g, err := basic.ToWebMercator(f.SRID, geo)
@@ -309,6 +310,7 @@ func (m Map) encodeMVTTile(ctx context.Context, tile *slippy.Tile) ([]byte, erro
 				if err != nil {
 					return nil
 				}
+				log.Printf("geo %s", geo)
 
 				mvtLayer.AddFeatures(mvt.Feature{
 					ID:       &f.ID,
@@ -352,6 +354,7 @@ func (m Map) encodeMVTTile(ctx context.Context, tile *slippy.Tile) ([]byte, erro
 
 	// generate the MVT tile
 	vtile, err := mvtTile.VTile(ctx)
+	log.Printf("Vtile %s", vtile)
 	if err != nil {
 		return nil, err
 	}
@@ -366,9 +369,12 @@ func (m Map) Encode(ctx context.Context, tile *slippy.Tile) ([]byte, error) {
 		tileBytes []byte
 		err       error
 	)
+	log.Printf("MAP ENCODE")
 	if m.HasMVTProvider() {
+		log.Printf("MAP ENCODE encodeMVTProviderTile")
 		tileBytes, err = m.encodeMVTProviderTile(ctx, tile)
 	} else {
+		log.Printf("MAP ENCODE encodeMVTTile")
 		tileBytes, err = m.encodeMVTTile(ctx, tile)
 	}
 	if err != nil {
